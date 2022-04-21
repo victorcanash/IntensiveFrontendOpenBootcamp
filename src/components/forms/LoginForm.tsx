@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { AxiosResponse } from 'axios';
@@ -25,6 +25,8 @@ const LoginForm = () => {
         password: ''
     }
 
+    let navigate = useNavigate();
+
     return (
         <div>
             <h4>Login Form</h4>
@@ -33,21 +35,22 @@ const LoginForm = () => {
                 initialValues={ initialCredentials }
                 validationSchema = { loginSchema }
                 onSubmit={ async(values) => {
-                    login(values.email, values.password).then((response: AxiosResponse) => {
+                    login(values.email, values.password).then(async (response: AxiosResponse) => {
                         if(response.status === 200){
                             if(response.data.token){
-                                sessionStorage.setItem('sessionJWTToken', response.data.token)
+                                await sessionStorage.setItem('sessionJWTToken', response.data.token);
+                                navigate('/');
                             }else{
-                                throw new Error('Error generating Login Token')
+                                throw new Error('Error generating Login Token');
                             }
                         }else{
-                            throw new Error('Invalid Credentials')
+                            throw new Error('Invalid Credentials');
                         }
                     }).catch((error) => console.error(`[LOGIN ERROR]: Something went wrong: ${error}`))
                 }}
             >
                 {
-                    ({ values, touched, errors, isSubmitting, handleChange, handleBlur }) => (
+                    ({ values, touched, errors, isSubmitting, handleChange, handleBlur, isValid }) => (
                         <Form>
                             {/* Email Field */}
                             <label htmlFor='email' >Email</label>
@@ -72,7 +75,11 @@ const LoginForm = () => {
                             }
 
                             {/* SUBMIT FORM */}
-                            <button type='submit' >Login</button>
+                            <button 
+                                type='submit' 
+                                disabled={ isSubmitting || !isValid || !touched.email }>
+                                Login
+                            </button>
 
                             {/* Message if the form is submitting */}
                             {
