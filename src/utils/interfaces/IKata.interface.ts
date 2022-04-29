@@ -10,6 +10,7 @@ export interface IKataStars {
 }
 
 export interface IKata {
+    _id: number,
     name: string,
     description: string,
     level: KataLevel,
