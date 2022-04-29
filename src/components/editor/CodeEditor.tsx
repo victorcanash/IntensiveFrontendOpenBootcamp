@@ -4,22 +4,14 @@ import Highlight, { defaultProps } from 'prism-react-renderer';
 
 interface EditorProps {
     language?: any,
-    children?: any
+    children?: any,
+    solution?: any
 }
 
-export const CodeEditor = ( { language, children  }: EditorProps ) => {
-
-    const codeExample = `
-        (function someDemo() {
-        var test = "Hello World!";
-        console.log(test);
-        })();
-        
-        return () => <App />;
-    `;
+export const CodeEditor = ( { language, children, solution  }: EditorProps ) => {
 
     return (
-        <Highlight { ...defaultProps } code={codeExample} language='jsx' >
+        <Highlight { ...defaultProps } code={children} language='typescript' >
             {({ className, style, tokens, getLineProps, getTokenProps }) => (
                 <pre className={className} style={style}>
                     {tokens.map((line, i) => (
