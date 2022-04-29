@@ -1,44 +1,25 @@
 import axios from '../utils/config/axios.config';
+import { IAuthLogin, IAuthRegister } from '../utils/interfaces/IAuth.interface';
 
 
 /**
  * Login Method
- * @param {string} email Email to login a user
- * @param {string} password Password to login a user
+ * @param {IAuthLogin} authLogin IAuthLogin interface to send all required data in the body
  * @returns 
  */
-export const login = (email: string, password:string) => {
-
-    // Declare Body to POST
-    let body = {
-        email: email,
-        password: password
-    }
-
+export const login = (authLogin: IAuthLogin) => {
     // Send POST request to login endpoint
     // http://localhost:8000/api/auth/login
-    return axios.post('/auth/login', body)
+    return axios.post('/auth/login', authLogin)
 }
 
 /**
  * Register Method
- * @param {string} name Name of user 
- * @param {string} email Email of user 
- * @param {string} password Password of user 
- * @param {number} age Age of user 
+ * @param {IAuthRegister} authRegister IAuthRegister interface to send all required data in the body
  * @returns 
  */
-export const register = (name: string, email: string, password:string, age: number) => {
-
-    // Declare Body to POST
-    let body = {
-        name: name,
-        email: email,
-        password: password,
-        age: age
-    }
-
-    // Send POST request to login endpoint
-    // http://localhost:8000/api/auth/login
-    return axios.post('/auth/register', body)
+export const register = (authRegister: IAuthRegister) => {
+    // Send POST request to register endpoint
+    // http://localhost:8000/api/auth/register
+    return axios.post('/auth/register', authRegister)
 }
