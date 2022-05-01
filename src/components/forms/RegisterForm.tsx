@@ -4,6 +4,7 @@ import * as Yup from 'yup';
 import { AxiosResponse } from 'axios';
 
 import { register } from '../../services/authService';
+import { IAuthRegister } from '../../utils/interfaces/IAuth.interface';
 
 
 const RegisterForm = () => {
@@ -52,8 +53,13 @@ const RegisterForm = () => {
                 initialValues={ initialValues }
                 validationSchema = { registerSchema }
                 onSubmit={ async(values) => {
-                    console.log('submitting');
-                    register(values.name, values.email, values.password, values.age).then((response: AxiosResponse) => {
+                    const authRegister: IAuthRegister = {
+                        name: values.name,
+                        email: values.email,
+                        password: values.password,
+                        age: values.age
+                    };
+                    register(authRegister).then((response: AxiosResponse) => {
                         if(response.status === 200){
                             console.log('User registered correctly')
                             console.log(response.data);

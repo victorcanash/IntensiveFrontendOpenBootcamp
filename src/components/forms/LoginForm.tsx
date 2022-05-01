@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { AxiosResponse } from 'axios';
 
 import { login } from '../../services/authService';
+import { IAuthLogin } from '../../utils/interfaces/IAuth.interface';
 
 
 // Define Schema of validation with Yup
@@ -35,7 +36,11 @@ const LoginForm = () => {
                 initialValues={ initialCredentials }
                 validationSchema = { loginSchema }
                 onSubmit={ async(values) => {
-                    login(values.email, values.password).then(async (response: AxiosResponse) => {
+                    const authLogin: IAuthLogin = {
+                        email: values.email,
+                        password: values.password
+                    };
+                    login(authLogin).then(async (response: AxiosResponse) => {
                         if(response.status === 200){
                             if(response.data.token){
                                 await sessionStorage.setItem('sessionJWTToken', response.data.token);
