@@ -1,9 +1,11 @@
 import axios from 'axios';
 
+import envConfig from './env.config';
+
 
 export default axios.create(
     {
-        baseURL: 'http://localhost:8000/api', // Base URL will be completed with the endpoints of our backend app
+        baseURL: envConfig.BACKEND_API_BASE_URL, // Base URL will be completed with the endpoints of our backend app
         responseType: 'json',
         timeout: 6000
     }
