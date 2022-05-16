@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React, { useState } from 'react';  
 import { useNavigate } from 'react-router-dom';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { AxiosResponse } from 'axios';
+import { StatusCodes } from 'http-status-codes';
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -18,6 +19,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
 
 import { login } from '../../services/authService';
 import { IAuthLogin } from '../../utils/interfaces/IAuth.interface';
@@ -42,6 +44,8 @@ export const LoginMaterial = () => {
 
     let navigate = useNavigate();
 
+    const [errorMsg, setErrorMsg] = useState('');
+
     const formik = useFormik({
         initialValues: {
             email: '',
@@ -59,17 +63,21 @@ export const LoginMaterial = () => {
             password: values.password
         };
         login(authLogin).then(async (response: AxiosResponse) => {
-            if (response.status === 200) {
+            if (response.status === StatusCodes.CREATED) {
                 if (response.data.token){
                     await sessionStorage.setItem('sessionJWTToken', response.data.token);
                     navigate('/');
                 } else {
-                    throw new Error('Error generating Login Token');
+                    throw new Error('Error generating login token');
                 }
             } else {
-                throw new Error('Invalid Credentials');
+                throw new Error('Something went wrong');
             }
-        }).catch((error) => console.error(`[Login ERROR]: Something went wrong: ${error}`))
+        }).catch((error) => {
+            let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
+            console.error(`[Login ERROR]: ${responseMsg}`);
+            setErrorMsg(responseMsg);
+        });
     };
 
     return (
@@ -150,6 +158,12 @@ export const LoginMaterial = () => {
                         >
                             Sign In
                         </Button>
+
+                        {
+                            errorMsg && errorMsg !== '' ?
+                                (<Alert severity="error">{ errorMsg }</Alert>)
+                                : null
+                        } 
 
                         <Grid container>
                             <Grid item xs>

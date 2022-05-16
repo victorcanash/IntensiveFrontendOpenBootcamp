@@ -1,9 +1,10 @@
-import * as React from 'react';
+import React, { useState } from 'react';   
 import { useNavigate } from 'react-router-dom';
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { AxiosResponse } from 'axios';
+import { StatusCodes } from 'http-status-codes';
 
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -18,9 +19,10 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Alert from '@mui/material/Alert';
 
-import { register } from '../../services/authService';
-import { IAuthRegister } from '../../utils/interfaces/IAuth.interface';
+import { register, login } from '../../services/authService';
+import { IAuthRegister, IAuthLogin } from '../../utils/interfaces/IAuth.interface';
 
 
 const validationSchema = Yup.object().shape(
@@ -59,6 +61,8 @@ export const RegisterMaterial = () => {
 
     let navigate = useNavigate();
 
+    const [errorMsg, setErrorMsg] = useState('');
+
     const formik = useFormik({
         initialValues: {
             name: '',
@@ -81,12 +85,39 @@ export const RegisterMaterial = () => {
             age: values.age
         };
         register(authRegister).then((response: AxiosResponse) => {
-            if (response.status === 200) {
-                navigate('/login');
-            } else{
-                throw new Error('Error in registry')
+            if (response.status === StatusCodes.CREATED) {
+                const authLogin: IAuthLogin = {
+                    email: values.email,
+                    password: values.password
+                };
+                onRegisterSuccess(authLogin);
+            } else {
+                throw new Error('Something went wrong');
             }
-        }).catch((error) => console.error(`[Register ERROR]: Something went wrong: ${error}`))
+        }).catch((error) => {
+            let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
+            console.error(`[Register ERROR]: ${responseMsg}`);
+            setErrorMsg(responseMsg);
+        });
+    };
+
+    const onRegisterSuccess = async (authLogin: IAuthLogin) => {
+        login(authLogin).then(async (response: AxiosResponse) => {
+            if (response.status === StatusCodes.CREATED) {
+                if (response.data.token){
+                    await sessionStorage.setItem('sessionJWTToken', response.data.token);
+                    navigate('/');
+                } else {
+                    throw new Error('Error generating login token');
+                }
+            } else {
+                throw new Error('Something went wrong');
+            }
+        }).catch((error) => {
+            let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
+            console.error(`[Login ERROR]: ${responseMsg}`);
+            setErrorMsg(responseMsg);
+        });
     };
 
     return (
@@ -213,6 +244,12 @@ export const RegisterMaterial = () => {
                         >
                             Sign Up
                         </Button>
+
+                        {
+                            errorMsg && errorMsg !== '' ?
+                                (<Alert severity="error">{ errorMsg }</Alert>)
+                                : null
+                        }        
 
                         <Grid container>
                             <Grid item xs>
