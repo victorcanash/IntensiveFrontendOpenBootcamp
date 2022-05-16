@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import { AxiosResponse } from 'axios';
+import { StatusCodes } from 'http-status-codes';
 
 // Theme personalization of Material UI
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
@@ -14,11 +17,11 @@ import  Typography  from '@mui/material/Typography';
 import List from '@mui/material/List';
 // Icons
 import IconButton from '@mui/material/IconButton';
-import Badge from '@mui/material/Badge';
+// import Badge from '@mui/material/Badge';
 import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutIcon from '@mui/icons-material/Logout';
-import NotificationsIcon from '@mui/icons-material/Notifications';
+// import NotificationsIcon from '@mui/icons-material/Notifications';
 // Material Grids & Box
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -27,11 +30,12 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 
 import { MenuItems } from './MenuItems';
-import { NewEditor } from '../editor/NewEditor';
-import { TipTapEditor } from '../editor/TipTapEditor';
+// import { NewEditor } from '../editor/NewEditor';
+// import { TipTapEditor } from '../editor/TipTapEditor';
 import { FileUploader } from '../uploader/FileUploader';
 import { useSessionStorage } from '../../hooks/useSessionStorage';
-import { logout } from '../../services/authService';
+import { logout, getLoggedUser } from '../../services/authService';
+import { IUser } from '../../utils/interfaces/IUser.interface';
 
 
 const drawerWidth: number = 240;
@@ -92,13 +96,23 @@ const myTheme = createTheme();
 // TODO: Refactor with Navigation Components
 export const Dashboard = () => {
 
+    const firstRenderRef = useRef(false)
+
     let loggedIn = useSessionStorage('sessionJWTToken');
     let navigate = useNavigate();
+
+    const [user, setUser] = useState({} as IUser);
 
     const [open, setOpen] = useState(true);
     
     const toggleDrawer = () => {
         setOpen(!open);
+    };
+
+    const logoutUser = async () => {
+        await logout(loggedIn);
+        await sessionStorage.removeItem('sessionJWTToken');
+        navigate('/login');
     };
 
     const onClickLogoutBtn = async () => {
@@ -113,16 +127,33 @@ export const Dashboard = () => {
             let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
             console.error(`[Logout ERROR]: ${responseMsg}`);
         }); */
-        await logout(loggedIn);
-        await sessionStorage.removeItem('sessionJWTToken');
-        navigate('/login');
+        await logoutUser();
     };
 
+    const getUser = async () => {
+        getLoggedUser(loggedIn).then(async (response: AxiosResponse) => {
+            if (response.status === StatusCodes.OK) {
+                setUser(response.data.user)
+            } else {
+                await logoutUser();
+            }
+        }).catch(async (error) => {
+            await logoutUser();
+        });
+    }
+
     useEffect(() => {
-        if(!loggedIn){
-            return navigate('/login');
+        if (!firstRenderRef.current) {
+            firstRenderRef.current = true;
+            return;
         }
-      }, [loggedIn, navigate])
+        if (!loggedIn) {
+            return navigate('/login');
+        } else {
+            getUser();
+            return;
+        }
+    }, [loggedIn])
 
     return (
         <ThemeProvider theme={myTheme}>

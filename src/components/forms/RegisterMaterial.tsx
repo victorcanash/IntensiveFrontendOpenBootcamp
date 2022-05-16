@@ -87,13 +87,13 @@ export const RegisterMaterial = () => {
             password: values.password,
             age: values.age
         };
-        register(authRegister).then((response: AxiosResponse) => {
+        register(authRegister).then(async (response: AxiosResponse) => {
             if (response.status === StatusCodes.CREATED) {
                 const authLogin: IAuthLogin = {
                     email: values.email,
                     password: values.password
                 };
-                onRegisterSuccess(authLogin);
+                await onRegisterSuccess(authLogin);
             } else {
                 throw new Error('Something went wrong');
             }

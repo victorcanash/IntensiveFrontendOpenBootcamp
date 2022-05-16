@@ -34,3 +34,16 @@ export const register = (authRegister: IAuthRegister) => {
     }
     return axios.post('/auth/logout', undefined, options);
 }
+
+/**
+ * Logout Method
+ * @returns 
+ */
+ export const getLoggedUser = (token: string) => {
+    const options: AxiosRequestConfig = {
+        headers: {
+            'x-access-token': token
+        }
+    }
+    return axios.get('/auth/me', options);
+}
