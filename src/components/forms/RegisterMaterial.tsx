@@ -21,7 +21,8 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
-import { register, login } from '../../services/authService';
+import { useSessionStorage } from '../../hooks/useSessionStorage';
+import { register, login, logout } from '../../services/authService';
 import { IAuthRegister, IAuthLogin } from '../../utils/interfaces/IAuth.interface';
 
 
@@ -60,6 +61,8 @@ const theme = createTheme();
 export const RegisterMaterial = () => {
 
     let navigate = useNavigate();
+
+    let loggedIn = useSessionStorage('sessionJWTToken');
 
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -105,6 +108,9 @@ export const RegisterMaterial = () => {
         login(authLogin).then(async (response: AxiosResponse) => {
             if (response.status === StatusCodes.CREATED) {
                 if (response.data.token){
+                    if (loggedIn) {
+                        await logout(loggedIn);
+                    }
                     await sessionStorage.setItem('sessionJWTToken', response.data.token);
                     navigate('/');
                 } else {
@@ -117,6 +123,7 @@ export const RegisterMaterial = () => {
             let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
             console.error(`[Login ERROR]: ${responseMsg}`);
             setErrorMsg(responseMsg);
+            navigate('/login');
         });
     };
 

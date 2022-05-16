@@ -1,9 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AxiosResponse } from 'axios';
-import { StatusCodes } from 'http-status-codes';
-
 // Theme personalization of Material UI
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 // CSS & Drawer
@@ -105,7 +102,7 @@ export const Dashboard = () => {
     };
 
     const onClickLogoutBtn = async () => {
-        logout(loggedIn).then(async (response: AxiosResponse) => {
+        /* logout(loggedIn).then(async (response: AxiosResponse) => {
             if (response.status === StatusCodes.CREATED) {
                 await sessionStorage.removeItem('sessionJWTToken');
                 navigate('/login');
@@ -115,7 +112,10 @@ export const Dashboard = () => {
         }).catch((error) => {
             let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
             console.error(`[Logout ERROR]: ${responseMsg}`);
-        });
+        }); */
+        await logout(loggedIn);
+        await sessionStorage.removeItem('sessionJWTToken');
+        navigate('/login');
     };
 
     useEffect(() => {
@@ -161,11 +161,13 @@ export const Dashboard = () => {
                             Code Verification Katas
                         </Typography>
                         {/* ICON to show Notifications */}
+                        {/*
                         <IconButton color='inherit'>
                             <Badge badgeContent={10} color='secondary'>
                                 <NotificationsIcon />
                             </Badge>
                         </IconButton>
+                        */}
                         {/* ICON to Logout */}
                         <IconButton 
                             color='inherit'

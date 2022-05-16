@@ -21,7 +21,8 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
-import { login } from '../../services/authService';
+import { useSessionStorage } from '../../hooks/useSessionStorage';
+import { login, logout } from '../../services/authService';
 import { IAuthLogin } from '../../utils/interfaces/IAuth.interface';
 
 
@@ -44,6 +45,8 @@ export const LoginMaterial = () => {
 
     let navigate = useNavigate();
 
+    let loggedIn = useSessionStorage('sessionJWTToken');
+
     const [errorMsg, setErrorMsg] = useState('');
 
     const formik = useFormik({
@@ -65,6 +68,9 @@ export const LoginMaterial = () => {
         login(authLogin).then(async (response: AxiosResponse) => {
             if (response.status === StatusCodes.CREATED) {
                 if (response.data.token){
+                    if (loggedIn) {
+                        await logout(loggedIn);
+                    }
                     await sessionStorage.setItem('sessionJWTToken', response.data.token);
                     navigate('/');
                 } else {
