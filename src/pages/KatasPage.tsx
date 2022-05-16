@@ -37,7 +37,7 @@ export const KatasPage = () => {
             }
         }).catch((error) => console.error(`[Get All Katas Error] ${error}`))
       }
-    }, [loggedIn])
+    }, [loggedIn, navigate])
     
     /**
      * Metho to navigate to Kata details

@@ -46,7 +46,7 @@ export const KatasDetailPage = () => {
           return navigate('/katas');
         }
     }
-    }, [loggedIn]);
+    }, [loggedIn, navigate, id]);
 
     return (
         <div>

@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import { AxiosResponse } from 'axios';
+import { StatusCodes } from 'http-status-codes';
 
 // Theme personalization of Material UI
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
-
 // CSS & Drawer
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
-
 // Nav Bar
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
 import  Typography  from '@mui/material/Typography';
-
 // Material Lists
 import List from '@mui/material/List';
-
 // Icons
 import IconButton from '@mui/material/IconButton';
 import Badge from '@mui/material/Badge';
@@ -22,7 +22,6 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import LogoutIcon from '@mui/icons-material/Logout';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-
 // Material Grids & Box
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
@@ -30,23 +29,20 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 
-// List for the menu
 import { MenuItems } from './MenuItems';
-
 import { NewEditor } from '../editor/NewEditor';
 import { TipTapEditor } from '../editor/TipTapEditor';
 import { FileUploader } from '../uploader/FileUploader';
+import { useSessionStorage } from '../../hooks/useSessionStorage';
+import { logout } from '../../services/authService';
 
 
-// Width for Drawer Menu
 const drawerWidth: number = 240;
 
-// Props form AppBar
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean
 }
 
-// App Bar
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
 })<AppBarProps>(({ theme, open }) => (
@@ -67,7 +63,6 @@ const AppBar = styled(MuiAppBar, {
     }
 ));
 
-// Drawer Menu
 const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' })(
     ({ theme, open }) => ({
         '& .MuiDrawer-paper': {
@@ -95,26 +90,48 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     })
 );
 
-// Define Theme
 const myTheme = createTheme();
 
-// Dashboard content
 // TODO: Refactor with Navigation Components
 export const Dashboard = () => {
+
+    let loggedIn = useSessionStorage('sessionJWTToken');
+    let navigate = useNavigate();
+
     const [open, setOpen] = useState(true);
     
-    // Show / Hide Drawer Menu
     const toggleDrawer = () => {
         setOpen(!open);
-    } 
+    };
+
+    const onClickLogoutBtn = async () => {
+        logout(loggedIn).then(async (response: AxiosResponse) => {
+            if (response.status === StatusCodes.CREATED) {
+                await sessionStorage.removeItem('sessionJWTToken');
+                navigate('/login');
+            } else {
+                throw new Error('Something went wrong');
+            }
+        }).catch((error) => {
+            let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
+            console.error(`[Logout ERROR]: ${responseMsg}`);
+        });
+    };
+
+    useEffect(() => {
+        if(!loggedIn){
+            return navigate('/login');
+        }
+      }, [loggedIn, navigate])
 
     return (
         <ThemeProvider theme={myTheme}>
+
             <Box sx= {{ display: 'flex' }}>
+
                 <CssBaseline />
-                {/* AppBar */}
+
                 <AppBar position='absolute' open={open} >
-                    {/* Toolbar --> Actions */}
                     <Toolbar sx={{ pr: '24px' }}>
                         {/* ICON TO TOGGLE DRAWER MENU */}
                         <IconButton
@@ -129,7 +146,7 @@ export const Dashboard = () => {
                                 })
                             }}
                         >
-                        <MenuIcon />
+                            <MenuIcon />
                         </IconButton>
                         {/* Title of App */}
                         <Typography 
@@ -150,11 +167,15 @@ export const Dashboard = () => {
                             </Badge>
                         </IconButton>
                         {/* ICON to Logout */}
-                        <IconButton color='inherit'>
-                                <LogoutIcon />
+                        <IconButton 
+                            color='inherit'
+                            onClick={onClickLogoutBtn}
+                        >
+                            <LogoutIcon />
                         </IconButton>
                     </Toolbar>
                 </AppBar>
+
                 <Drawer variant='permanent' open={open}>
                     <Toolbar
                         sx={{
@@ -175,6 +196,7 @@ export const Dashboard = () => {
                         { MenuItems }
                     </List>
                 </Drawer>
+
                 {/* Dashboard Content */}
                 <Box 
                     component='main'
@@ -206,7 +228,9 @@ export const Dashboard = () => {
                         </Grid>
                     </Container>
                 </Box>  
+
             </Box>
+
         </ThemeProvider>
     )
 }

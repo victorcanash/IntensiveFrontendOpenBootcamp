@@ -32,5 +32,5 @@ export const register = (authRegister: IAuthRegister) => {
             'x-access-token': token
         }
     }
-    return axios.post('/auth/logout', options);
+    return axios.post('/auth/logout', undefined, options);
 }
