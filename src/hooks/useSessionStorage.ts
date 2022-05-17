@@ -6,5 +6,4 @@ export const useSessionStorage = (key: string): any | boolean => {
     }else{
         return storedValue;
     }
-
 }
