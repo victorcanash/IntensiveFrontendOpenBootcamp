@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { AxiosResponse } from 'axios';
@@ -29,6 +29,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 
+import { ApplicationContext } from '../../context/ApplicationContext';
 import { MenuItems } from './MenuItems';
 // import { NewEditor } from '../editor/NewEditor';
 // import { TipTapEditor } from '../editor/TipTapEditor';
@@ -96,6 +97,10 @@ const myTheme = createTheme();
 // TODO: Refactor with Navigation Components
 export const Dashboard = () => {
 
+    const { setLoading } = useContext(
+        ApplicationContext
+    );
+
     const firstRenderRef = useRef(false)
 
     let loggedIn = useSessionStorage('sessionJWTToken');
@@ -127,6 +132,7 @@ export const Dashboard = () => {
             let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
             console.error(`[Logout ERROR]: ${responseMsg}`);
         }); */
+        setLoading(true);
         await logoutUser();
     };
 
@@ -134,6 +140,7 @@ export const Dashboard = () => {
         getLoggedUser(loggedIn).then(async (response: AxiosResponse) => {
             if (response.status === StatusCodes.OK) {
                 setUser(response.data.user)
+                setLoading(false);
             } else {
                 await logoutUser();
             }

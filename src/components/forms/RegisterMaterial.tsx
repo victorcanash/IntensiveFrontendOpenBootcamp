@@ -1,4 +1,4 @@
-import React, { useState } from 'react';   
+import React, { useState, useContext, useEffect } from 'react';   
 import { useNavigate } from 'react-router-dom';
 
 import { useFormik } from 'formik';
@@ -21,6 +21,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
+import { ApplicationContext } from '../../context/ApplicationContext';
 import { useSessionStorage } from '../../hooks/useSessionStorage';
 import { register, login, logout } from '../../services/authService';
 import { IAuthRegister, IAuthLogin } from '../../utils/interfaces/IAuth.interface';
@@ -60,6 +61,10 @@ const theme = createTheme();
 
 export const RegisterMaterial = () => {
 
+    const { setLoading } = useContext(
+        ApplicationContext
+    );
+
     let navigate = useNavigate();
 
     let loggedIn = useSessionStorage('sessionJWTToken');
@@ -81,6 +86,7 @@ export const RegisterMaterial = () => {
     });
 
     const handleSubmit = async (values: {name: string, email: string, password: string, age: number}) => {
+        setLoading(true);
         const authRegister: IAuthRegister = {
             name: values.name,
             email: values.email,
@@ -101,6 +107,7 @@ export const RegisterMaterial = () => {
             let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
             console.error(`[Register ERROR]: ${responseMsg}`);
             setErrorMsg(responseMsg);
+            setLoading(false);
         });
     };
 
@@ -126,6 +133,10 @@ export const RegisterMaterial = () => {
             navigate('/login');
         });
     };
+
+    useEffect(() => {
+        setLoading(false);
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';  
+import React, { useState, useContext, useEffect } from 'react';  
 import { useNavigate } from 'react-router-dom';
 
 import { useFormik } from 'formik';
@@ -21,6 +21,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
+import { ApplicationContext } from '../../context/ApplicationContext';
 import { useSessionStorage } from '../../hooks/useSessionStorage';
 import { login, logout } from '../../services/authService';
 import { IAuthLogin } from '../../utils/interfaces/IAuth.interface';
@@ -43,6 +44,10 @@ const theme = createTheme();
 
 export const LoginMaterial = () => {
 
+    const { setLoading } = useContext(
+        ApplicationContext
+    );
+
     let navigate = useNavigate();
 
     let loggedIn = useSessionStorage('sessionJWTToken');
@@ -61,6 +66,7 @@ export const LoginMaterial = () => {
     });
 
     const handleSubmit = async (values: {email: string, password: string}) => {
+        setLoading(true);
         const authLogin: IAuthLogin = {
             email: values.email,
             password: values.password
@@ -83,8 +89,13 @@ export const LoginMaterial = () => {
             let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
             console.error(`[Login ERROR]: ${responseMsg}`);
             setErrorMsg(responseMsg);
+            setLoading(false);
         });
     };
+
+    useEffect(() => {
+        setLoading(false);
+    }, []);
 
     return (
         <ThemeProvider theme={theme}>
