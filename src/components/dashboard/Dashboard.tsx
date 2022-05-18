@@ -29,7 +29,7 @@ import Divider from '@mui/material/Divider';
 import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 
-import { ApplicationContext } from '../../context/ApplicationContext';
+import { ApplicationContext } from '../../contexts/ApplicationContext';
 import { MenuItems } from './MenuItems';
 // import { NewEditor } from '../editor/NewEditor';
 // import { TipTapEditor } from '../editor/TipTapEditor';
@@ -97,11 +97,11 @@ const myTheme = createTheme();
 // TODO: Refactor with Navigation Components
 export const Dashboard = () => {
 
+    const firstRenderRef = useRef(false)
+
     const { setLoading } = useContext(
         ApplicationContext
     );
-
-    const firstRenderRef = useRef(false)
 
     let loggedIn = useSessionStorage('sessionJWTToken');
     let navigate = useNavigate();

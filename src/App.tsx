@@ -5,7 +5,7 @@ import './App.css';
 import { AppRoutes } from './routes/Routes';
 import { StickyFooter } from './components/dashboard/StickyFooter';
 import { Loading } from './components/Loading';
-import { ApplicationContext } from './context/ApplicationContext';
+import { ApplicationContext } from './contexts/ApplicationContext';
 
 
 function App() {

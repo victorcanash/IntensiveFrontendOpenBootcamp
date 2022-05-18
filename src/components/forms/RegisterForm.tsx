@@ -1,4 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';   
+import React, { useState, useContext, useEffect, useRef } from 'react';  
+import { useNavigate } from 'react-router-dom'; 
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -20,8 +21,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
-import { ApplicationContext } from '../../context/ApplicationContext';
-import { useCustomNav } from '../../hooks/useCustomNav';
+import { ApplicationContext } from '../../contexts/ApplicationContext';
 import { useSessionStorage } from '../../hooks/useSessionStorage';
 import { register, login, logout } from '../../services/authService';
 import { IAuthRegister, IAuthLogin } from '../../utils/interfaces/IAuth.interface';
@@ -61,9 +61,11 @@ const theme = createTheme();
 
 export const RegisterForm = () => {
 
-    const { loading, setLoading } = useContext(ApplicationContext);
+    const firstRenderRef = useRef(false);
 
-    const navigate = useCustomNav;
+    const { setLoading } = useContext(ApplicationContext);
+
+    const navigate = useNavigate();
 
     const loggedIn = useSessionStorage('sessionJWTToken');
 
@@ -133,10 +135,11 @@ export const RegisterForm = () => {
     };
 
     useEffect(() => {
-        if (loading) {
+        if (!firstRenderRef.current) {
+            firstRenderRef.current = true;
             setLoading(false);
-        }     
-    }, [loading, setLoading]);
+        }    
+    }, [setLoading]);
 
     return (
         <ThemeProvider theme={theme}>

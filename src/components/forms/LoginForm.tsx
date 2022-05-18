@@ -1,4 +1,5 @@
-import React, { useState, useContext, useEffect } from 'react';  
+import React, { useState, useContext, useEffect, useRef } from 'react';  
+import { useNavigate } from 'react-router-dom'; 
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -20,8 +21,7 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
-import { ApplicationContext } from '../../context/ApplicationContext';
-import { useCustomNav } from '../../hooks/useCustomNav';
+import { ApplicationContext } from '../../contexts/ApplicationContext';
 import { useSessionStorage } from '../../hooks/useSessionStorage';
 import { login, logout } from '../../services/authService';
 import { IAuthLogin } from '../../utils/interfaces/IAuth.interface';
@@ -44,9 +44,11 @@ const theme = createTheme();
 
 export const LoginForm = () => {
 
-    const { loading, setLoading } = useContext(ApplicationContext);
+    const firstRenderRef = useRef(false);
 
-    let navigate = useCustomNav;
+    const { setLoading } = useContext(ApplicationContext);
+
+    let navigate = useNavigate();
 
     let loggedIn = useSessionStorage('sessionJWTToken');
 
@@ -92,10 +94,11 @@ export const LoginForm = () => {
     };
 
     useEffect(() => {
-        if (loading) {
+        if (!firstRenderRef.current) {
+            firstRenderRef.current = true;
             setLoading(false);
-        }     
-    }, [loading, setLoading]);
+        }    
+    }, [setLoading]);
 
     return (
         <ThemeProvider theme={theme}>
@@ -184,12 +187,12 @@ export const LoginForm = () => {
 
                         <Grid container>
                             <Grid item xs>
-                                <Link onClick={() => {navigate('/login')}} variant="body2">
+                                <Link href="#" onClick={() => {navigate('/login')}} variant="body2">
                                     Forgot password?
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Link onClick={() => {navigate('/register')}}variant="body2">
+                                <Link href="#" onClick={() => {navigate('/register')}}variant="body2">
                                     Don't have an account? Sign Up
                                 </Link>
                             </Grid>
