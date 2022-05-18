@@ -1,6 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
-import ScrollToTop from '../components/ScrollToTop';
+import ScrollToTop from '../components/location/ScrollToTop';
 import { HomePage } from '../pages/HomePage';
 import { KatasDetailPage } from '../pages/KatasDetailPage';
 import { KatasPage } from '../pages/KatasPage';

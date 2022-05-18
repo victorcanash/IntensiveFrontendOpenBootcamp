@@ -4,7 +4,7 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import './App.css';
 import { AppRoutes } from './routes/Routes';
 import { StickyFooter } from './components/dashboard/StickyFooter';
-import { Loading } from './components/Loading';
+import { Loading } from './components/loading/Loading';
 import { ApplicationContext } from './contexts/ApplicationContext';
 
 
