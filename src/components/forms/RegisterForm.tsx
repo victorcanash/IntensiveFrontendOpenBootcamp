@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';  
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate, Link as RouterLink } from 'react-router-dom'; 
 
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -274,7 +274,7 @@ export const RegisterForm = () => {
 
                         <Grid container>
                             <Grid item xs>
-                                <Link onClick={() => {navigate('/login')}} variant="body2">
+                                <Link component={RouterLink} to='/login' variant="body2">
                                     Already have an account? Sign in
                                 </Link>
                             </Grid>
