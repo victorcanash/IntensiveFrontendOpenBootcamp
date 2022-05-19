@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { AxiosResponse } from 'axios';
-import { StatusCodes } from 'http-status-codes';
+// import { AxiosResponse } from 'axios';
+// import { StatusCodes } from 'http-status-codes';
 
 // Theme personalization of Material UI
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
@@ -34,9 +34,10 @@ import { MenuItems } from './MenuItems';
 // import { NewEditor } from '../editor/NewEditor';
 // import { TipTapEditor } from '../editor/TipTapEditor';
 import { FileUploader } from '../uploader/FileUploader';
-import { useSessionStorage } from '../../hooks/useSessionStorage';
-import { logout, getLoggedUser } from '../../services/authService';
+import { logout } from '../../services/authService';
 import { IUser } from '../../utils/interfaces/IUser.interface';
+import { removeLocalStorageItem } from '../../utils/storage';
+import STORAGE_KEYS from '../../constants/storageKeys';
 
 
 const drawerWidth: number = 240;
@@ -99,14 +100,9 @@ export const Dashboard = () => {
 
     const firstRenderRef = useRef(false)
 
-    const { setLoading } = useContext(
-        ApplicationContext
-    );
+    const { token, user, setLoading, setToken, setUser } = useContext(ApplicationContext);
 
-    let loggedIn = useSessionStorage('sessionJWTToken');
     let navigate = useNavigate();
-
-    const [user, setUser] = useState({} as IUser);
 
     const [open, setOpen] = useState(true);
     
@@ -115,8 +111,10 @@ export const Dashboard = () => {
     };
 
     const logoutUser = async () => {
-        await logout(loggedIn);
-        await sessionStorage.removeItem('sessionJWTToken');
+        await logout(token);
+        await removeLocalStorageItem(STORAGE_KEYS.JWTToken)
+        setToken('');
+        setUser({} as IUser);
         navigate('/login');
     };
 
@@ -136,31 +134,15 @@ export const Dashboard = () => {
         await logoutUser();
     };
 
-    const getUser = async () => {
-        getLoggedUser(loggedIn).then(async (response: AxiosResponse) => {
-            if (response.status === StatusCodes.OK) {
-                setUser(response.data.user)
-                setLoading(false);
-            } else {
-                await logoutUser();
-            }
-        }).catch(async (error) => {
-            await logoutUser();
-        });
-    }
-
     useEffect(() => {
         if (!firstRenderRef.current) {
             firstRenderRef.current = true;
-            return;
+            if (!token || !user) {
+                return navigate('/login');
+            } 
+            setLoading(false);
         }
-        if (!loggedIn) {
-            return navigate('/login');
-        } else {
-            getUser();
-            return;
-        }
-    }, [loggedIn])
+    }, [navigate, token, user, setLoading])
 
     return (
         <ThemeProvider theme={myTheme}>

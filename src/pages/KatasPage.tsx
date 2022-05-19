@@ -1,51 +1,59 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AxiosResponse } from 'axios';
 
-import { useSessionStorage } from '../hooks/useSessionStorage';
+import { AxiosResponse } from 'axios';
+import { StatusCodes } from 'http-status-codes';
+
+import { ApplicationContext } from '../contexts/ApplicationContext';
 import { getAllKatas } from '../services/katasService';
 import { IKata } from '../utils/interfaces/IKata.interface';
 
 
 export const KatasPage = () => {
 
-    let loggedIn = useSessionStorage('sessionJWTToken');
+    const firstRenderRef = useRef(false)
+
+    const { token, user, setLoading } = useContext(ApplicationContext);
+
     let navigate = useNavigate();
 
-    // State of component
-    const [katas, setKatas] = useState([]); // initial katas is empty
-    const [totalPages, setTotalPages] = useState(1) // initial default value
-    const [currentPage, setCurrentPage] = useState(1) // initial default value
+    const [katas, setKatas] = useState([] as IKata[]);
+    const [totalPages, setTotalPages] = useState(1);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [errorMsg, setErrorMsg] = useState('');
 
     const ratingText = (kata: IKata) => ( 
         `Rating: ${kata?.stars} / 5`
     );
 
-    useEffect(() => {
-      if(!loggedIn){
-          return navigate('/login');
-      } else {
-        getAllKatas(loggedIn, 2, 1).then((response: AxiosResponse) => {
-            if(response.status === 200 && response.data.katas && response.data.totalPages && response.data.currentPage){
-                console.table(response.data);
-                let { katas, totalPages, currentPage} = response.data;
-                setKatas(katas);
-                setTotalPages(totalPages);
-                setCurrentPage(currentPage);
-            }else{
-                throw new Error(`Error obtaining katas: ${response.data}`)
-            }
-        }).catch((error) => console.error(`[Get All Katas Error] ${error}`))
-      }
-    }, [loggedIn, navigate])
-    
-    /**
-     * Metho to navigate to Kata details
-     * @param id of Kata to navigate to
-     */
     const navigateToKataDetail = (id: number) => {
         navigate(`/katas/${id}`);
     }
+
+    useEffect(() => {
+        if (!firstRenderRef.current) {
+            firstRenderRef.current = true;
+            if (!token || !user) {
+                return navigate('/login');
+            } 
+            getAllKatas(token, currentPage).then((response: AxiosResponse) => {
+                if(response.status === StatusCodes.OK){
+                    let { katas, totalPages, currentPage} = response.data;
+                    setKatas(katas);
+                    setTotalPages(totalPages);
+                    setCurrentPage(currentPage);
+                    setLoading(false);
+                } else {
+                    throw new Error('Something went wrong');
+                }
+            }).catch((error) => {
+                let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
+                console.error(`[Get All Katas ERROR]: ${responseMsg}`);
+                setErrorMsg(responseMsg);             
+                setLoading(false);
+            });
+        }
+    }, [currentPage, navigate, setLoading, token, user]);
 
     return (
         <div>

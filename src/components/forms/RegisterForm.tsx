@@ -22,9 +22,12 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
 import { ApplicationContext } from '../../contexts/ApplicationContext';
-import { useSessionStorage } from '../../hooks/useSessionStorage';
 import { register, login, logout } from '../../services/authService';
 import { IAuthRegister, IAuthLogin } from '../../utils/interfaces/IAuth.interface';
+import { IUser } from '../../utils/interfaces/IUser.interface';
+import { getCredentials } from '../../utils/auth';
+import { setLocalStorageItem } from '../../utils/storage';
+import STORAGE_KEYS from '../../constants/storageKeys';
 
 
 const validationSchema = Yup.object().shape(
@@ -63,11 +66,9 @@ export const RegisterForm = () => {
 
     const firstRenderRef = useRef(false);
 
-    const { setLoading } = useContext(ApplicationContext);
+    const { token, setLoading, setToken, setUser } = useContext(ApplicationContext);
 
     const navigate = useNavigate();
-
-    const loggedIn = useSessionStorage('sessionJWTToken');
 
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -99,7 +100,7 @@ export const RegisterForm = () => {
                     email: values.email,
                     password: values.password
                 };
-                await onRegisterSuccess(authLogin);
+                onRegisterSuccess(authLogin);
             } else {
                 throw new Error('Something went wrong');
             }
@@ -115,11 +116,15 @@ export const RegisterForm = () => {
         login(authLogin).then(async (response: AxiosResponse) => {
             if (response.status === StatusCodes.CREATED) {
                 if (response.data.token){
-                    if (loggedIn) {
-                        await logout(loggedIn);
+                    if (token !== '') {
+                        await logout(token);
                     }
-                    await sessionStorage.setItem('sessionJWTToken', response.data.token);
-                    navigate('/');
+                    await setLocalStorageItem(STORAGE_KEYS.JWTToken, response.data.token);
+                    getCredentials().then((response: {token: string, user: IUser}) => {
+                        setToken(response.token);
+                        setUser(response.user);
+                        navigate('/');
+                    });
                 } else {
                     throw new Error('Error generating login token');
                 }
@@ -267,14 +272,13 @@ export const RegisterForm = () => {
                         </Button>
 
                         {
-                            errorMsg && errorMsg !== '' ?
-                                (<Alert severity="error">{ errorMsg }</Alert>)
-                                : null
+                            errorMsg && errorMsg !== '' &&
+                                <Alert severity="error">{ errorMsg }</Alert>
                         }        
 
                         <Grid container>
                             <Grid item xs>
-                                <Link component={RouterLink} to='/login' variant="body2">
+                                <Link component={RouterLink} to="/login" variant="body2">
                                     Already have an account? Sign in
                                 </Link>
                             </Grid>

@@ -22,9 +22,12 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Alert from '@mui/material/Alert';
 
 import { ApplicationContext } from '../../contexts/ApplicationContext';
-import { useSessionStorage } from '../../hooks/useSessionStorage';
 import { login, logout } from '../../services/authService';
 import { IAuthLogin } from '../../utils/interfaces/IAuth.interface';
+import { IUser } from '../../utils/interfaces/IUser.interface';
+import { getCredentials } from '../../utils/auth';
+import { setLocalStorageItem } from '../../utils/storage';
+import STORAGE_KEYS from '../../constants/storageKeys';
 
 
 const validationSchema = Yup.object().shape(
@@ -46,11 +49,9 @@ export const LoginForm = () => {
 
     const firstRenderRef = useRef(false);
 
-    const { setLoading } = useContext(ApplicationContext);
+    const { token, setLoading, setToken, setUser } = useContext(ApplicationContext);
 
     let navigate = useNavigate();
-
-    let loggedIn = useSessionStorage('sessionJWTToken');
 
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -74,11 +75,15 @@ export const LoginForm = () => {
         login(authLogin).then(async (response: AxiosResponse) => {
             if (response.status === StatusCodes.CREATED) {
                 if (response.data.token){
-                    if (loggedIn) {
-                        await logout(loggedIn);
+                    if (token !== '') {
+                        await logout(token);
                     }
-                    await sessionStorage.setItem('sessionJWTToken', response.data.token);
-                    navigate('/');
+                    await setLocalStorageItem(STORAGE_KEYS.JWTToken, response.data.token);
+                    getCredentials().then((response: {token: string, user: IUser}) => {
+                        setToken(response.token);
+                        setUser(response.user);
+                        navigate('/');
+                    });
                 } else {
                     throw new Error('Error generating login token');
                 }
@@ -180,19 +185,18 @@ export const LoginForm = () => {
                         </Button>
 
                         {
-                            errorMsg && errorMsg !== '' ?
-                                (<Alert severity="error">{ errorMsg }</Alert>)
-                                : null
+                            errorMsg && errorMsg !== '' &&
+                                <Alert severity="error">{ errorMsg }</Alert>
                         } 
 
                         <Grid container>
                             <Grid item xs>
-                                <Link component={RouterLink} to='/login' variant="body2">
+                                <Link component={RouterLink} to="/login" variant="body2">
                                     Forgot password?
                                 </Link>
                             </Grid>
                             <Grid item>
-                                <Link component={RouterLink} to='/register' variant="body2">
+                                <Link component={RouterLink} to="/register" variant="body2">
                                     Don't have an account? Sign Up
                                 </Link>
                             </Grid>

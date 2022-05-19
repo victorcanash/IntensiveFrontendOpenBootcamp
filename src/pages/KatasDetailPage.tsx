@@ -1,52 +1,66 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { AxiosResponse } from 'axios';
 
+import { AxiosResponse } from 'axios';
+import { StatusCodes } from 'http-status-codes';
+
+import { ApplicationContext } from '../contexts/ApplicationContext';
 import { CodeEditor } from '../components/editor/CodeEditor';
-import { useSessionStorage } from '../hooks/useSessionStorage';
 import { getKataByID } from '../services/katasService';
 import { IKata } from '../utils/interfaces/IKata.interface';
 
 
 export const KatasDetailPage = () => {
 
-    let loggedIn = useSessionStorage('sessionJWTToken');
+    const firstRenderRef = useRef(false)
+
+    const { token, user, setLoading } = useContext(ApplicationContext);
+
     let navigate = useNavigate();
-    // Find id from params
+
     let { id } = useParams();
 
-    const [kata, setKata] = useState<IKata | undefined>(undefined);
+    const [kata, setKata] = useState<IKata>({} as IKata);
     const [showSolution, setShowSolution] = useState(false)
+    const [errorMsg, setErrorMsg] = useState('');
 
     const ratingText: string = `Rating: ${kata?.stars} / 5`;
 
     useEffect(() => {
-      if(!loggedIn){
-          return navigate('/login');
-      } else {
-        if (id) {
-            getKataByID(loggedIn, id).then((response: AxiosResponse) => {
-                  if(response.status === 200 && response.data) {
-                      let kataData = {
-                          _id: response.data._id,
-                          name: response.data.name,
-                          description: response.data.description,
-                          stars: response.data.stars,
-                          level: response.data.level,
-                          intents: response.data.intents,
-                          creator: response.data.creator,
-                          solution: response.data.solution,
-                          participants: response.data.participants
-                      }
-                      setKata(kataData);
-                      console.table(kataData);
-                  }
-            }).catch((error) => console.error(`[Kata By ID ERROR]: ${error}`))
-        } else { 
-          return navigate('/katas');
+        if (!firstRenderRef.current) {
+            firstRenderRef.current = true;
+            if (!token || !user) {
+                return navigate('/login');
+            } 
+            if (!id) { 
+                return navigate('/katas');
+            }
+            getKataByID(token, id).then((response: AxiosResponse) => {
+                if(response.status === StatusCodes.OK) {
+                    let kataData = {
+                        _id: response.data._id,
+                        name: response.data.name,
+                        description: response.data.description,
+                        stars: response.data.stars,
+                        level: response.data.level,
+                        intents: response.data.intents,
+                        creator: response.data.creator,
+                        solution: response.data.solution,
+                        participants: response.data.participants
+                    } as IKata;
+                    setKata(kataData);
+                    setLoading(false);
+                } else {
+                    throw new Error('Something went wrong');
+                }
+            }).catch((error) => {
+                let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
+                console.error(`[Kata By ID ERROR]: ${responseMsg}`);
+                setErrorMsg(responseMsg);             
+                setLoading(false);
+            });
         }
-    }
-    }, [loggedIn, navigate, id]);
+    }, [id, navigate, setLoading, token, user]);
 
     return (
         <div>
