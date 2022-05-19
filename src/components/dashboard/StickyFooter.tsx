@@ -1,9 +1,8 @@
-import CssBaseline  from "@mui/material/CssBaseline";
+import CssBaseline  from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 
-// our CopyRight component
-import { Copyright } from "./CopyRight";
+import { Copyright } from './Copyright';
 
 
 export const StickyFooter = () => {
