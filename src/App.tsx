@@ -9,7 +9,7 @@ import { IUser } from './utils/interfaces/IUser.interface';
 
 import { AppRoutes } from './routes/Routes';
 import { Loading } from './components/loading/Loading';
-import { StickyFooter } from './components/dashboard/StickyFooter';
+import { StickyFooter } from './components/footer/StickyFooter';
 
 
 function App() {
