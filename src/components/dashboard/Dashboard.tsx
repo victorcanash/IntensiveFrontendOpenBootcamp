@@ -30,7 +30,7 @@ import Grid from '@mui/material/Grid';
 import Paper from '@mui/material/Paper';
 
 import { ApplicationContext } from '../../contexts/ApplicationContext';
-import { MenuItems } from './MenuItems';
+import { MenuItems } from '../navigation/MenuItems';
 // import { NewEditor } from '../editor/NewEditor';
 // import { TipTapEditor } from '../editor/TipTapEditor';
 import { FileUploader } from '../uploader/FileUploader';

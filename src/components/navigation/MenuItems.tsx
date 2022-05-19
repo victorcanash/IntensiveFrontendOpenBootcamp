@@ -13,21 +13,21 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 
 export const MenuItems = (
     <React.Fragment>
-        {/* Dashboard to Katas Button */}
+        {/* Katas Button */}
         <ListItemButton>
             <ListItemIcon>
                 <DashboardIcon />
             </ListItemIcon>
             <ListItemText primary="Katas" />
         </ListItemButton>
-        {/* Users */}
+        {/* Users Button */}
         <ListItemButton>
             <ListItemIcon>
                 <PeopleIcon />
             </ListItemIcon>
             <ListItemText primary="Users" />
         </ListItemButton>
-        {/* Ranking */}
+        {/* Ranking Button */}
         <ListItemButton>
             <ListItemIcon>
                 <BarChartIcon />
