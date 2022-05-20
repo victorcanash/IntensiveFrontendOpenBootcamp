@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { BrowserRouter as Router } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import './App.css';
 
@@ -7,6 +7,7 @@ import { ApplicationContext } from './contexts/ApplicationContext';
 import { getCredentials } from './utils/auth';
 import { IUser } from './utils/interfaces/IUser.interface';
 
+import { ScrollToTop } from './routes/ScrollToTop';
 import { AppRoutes } from './routes/Routes';
 import { Loading } from './components/loading/Loading';
 import { StickyFooter } from './components/footer/StickyFooter';
@@ -64,10 +65,15 @@ function App() {
                                 setUser 
                             }}
                         >
-                            <Router>
-                                <AppRoutes />
-                            </Router>
+
+                            <BrowserRouter>
+                                <ScrollToTop>
+                                    <AppRoutes />
+                                </ScrollToTop>
+                            </BrowserRouter>
+
                             <StickyFooter />
+
                         </ApplicationContext.Provider>
                     </div> 
             }

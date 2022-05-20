@@ -30,7 +30,6 @@ import { removeLocalStorageItem } from '../../utils/storage';
 import STORAGE_KEYS from '../../constants/storageKeys';
 
 import { MenuItems } from './MenuItems';
-import { Dashboard } from '../dashboard/Dashboard';
 
 
 const drawerWidth: number = 240;
@@ -88,7 +87,11 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const myTheme = createTheme();
 
-export const Navigation = () => {
+interface Props {
+    page: JSX.Element
+}
+
+export const Navigation: React.FC<Props> = ({ page }) => {
 
     const firstRenderRef = useRef(false)
 
@@ -228,7 +231,7 @@ export const Navigation = () => {
                                 flexDirection: 'column',
                             
                             }}>
-                                <Dashboard />
+                                { page }
                             </Paper>
                         </Grid>
                     </Container>
