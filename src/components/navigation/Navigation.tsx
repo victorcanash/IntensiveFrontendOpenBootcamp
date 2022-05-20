@@ -107,7 +107,7 @@ export const Navigation: React.FC<Props> = ({ page }) => {
 
     const logoutUser = async () => {
         await logout(token);
-        await removeLocalStorageItem(STORAGE_KEYS.JWTToken)
+        await removeLocalStorageItem(STORAGE_KEYS.JWTToken);
         setToken('');
         setUser({} as IUser);
         navigate('/login');
