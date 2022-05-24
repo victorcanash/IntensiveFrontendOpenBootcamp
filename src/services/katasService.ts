@@ -4,6 +4,18 @@ import axios from '../utils/config/axios.config';
 import { IKataUpdate, KataLevels } from '../utils/interfaces/IKata.interface';
 
 
+export const getKataByID = (token: string, id: string) => {
+    const options: AxiosRequestConfig = {
+        headers: {
+            'x-access-token': token
+        },
+        params: {
+            id
+        }
+    }
+    return axios.get('/katas', options)
+}
+
 export const getAllKatas = (token: string, page?: number, limit?: number, level?: KataLevels, order?: {}) => {
     const options: AxiosRequestConfig = {
         headers: {
@@ -16,19 +28,7 @@ export const getAllKatas = (token: string, page?: number, limit?: number, level?
             order
         }
     }
-    return axios.get('/katas', options)
-}
-
-export const getKataByID = (token: string, id: string) => {
-    const options: AxiosRequestConfig = {
-        headers: {
-            'x-access-token': token
-        },
-        params: {
-            id
-        }
-    }
-    return axios.get('/katas', options)
+    return axios.get('/katas/all', options)
 }
 
 export const createKata = (token: string, kata: IKataUpdate) => {
