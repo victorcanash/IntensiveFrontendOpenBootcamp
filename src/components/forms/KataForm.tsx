@@ -37,10 +37,11 @@ const validationSchema = Yup.object().shape(
 );
 
 interface Props {
-    kata: IKata
+    kata: IKata;
+    onFormSuccess: (createdKata: IKata) => void;
 };
 
-export const KataForm: React.FC<Props> = ({kata}) => {
+export const KataForm: React.FC<Props> = ({kata, onFormSuccess}) => {
 
     const firstRenderRef = useRef(false);
 
@@ -70,38 +71,53 @@ export const KataForm: React.FC<Props> = ({kata}) => {
             level: values.level,
             intents: values.intents
         };
-        if (!kata) {
+        if (!kata._id) {
             createKata(token, newKata).then(async (response: AxiosResponse) => {
                 if (response.status === StatusCodes.CREATED) {
                     setSuccessMsg('Created Kata');
-                    formik.resetForm();
-                    setLoading(false);
+                    formSuccess(response);
                 } else {
                     throw new Error('Something went wrong');
                 }
             }).catch((error) => {
-                let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
-                console.error(`[Create Kata ERROR]: ${responseMsg}`);
-                setErrorMsg(responseMsg);
-                setLoading(false);
+                formFailed(error);
             });
         } else {
             updateKata(token, newKata).then(async (response: AxiosResponse) => {
                 if (response.status === StatusCodes.CREATED) {
                     setSuccessMsg('Updated Kata');
-                    formik.resetForm();
-                    setLoading(false);
+                    formSuccess(response);
                 } else {
                     throw new Error('Something went wrong');
                 }
             }).catch((error) => {
-                let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
-                console.error(`[Update Kata ERROR]: ${responseMsg}`);
-                setErrorMsg(responseMsg);
-                setLoading(false);
+                formFailed(error);
             });
         }
     };
+
+    const formSuccess = (response: AxiosResponse) => {
+        let kataData = {
+            _id: response.data._id,
+            name: response.data.name,
+            description: response.data.description,
+            level: response.data.level,
+            intents: response.data.intents,
+            stars: response.data.stars,           
+            creator: response.data.creator,
+            participants: response.data.participants,
+            files: response.data.files
+        } as IKata;
+        formik.resetForm();
+        onFormSuccess(kataData);
+    };
+
+    const formFailed = (error: any) => {
+        let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
+        console.error(`[Update Kata ERROR]: ${responseMsg}`);
+        setErrorMsg(responseMsg);
+        setLoading(false);
+    }
 
     useEffect(() => {
         if (!firstRenderRef.current) {
