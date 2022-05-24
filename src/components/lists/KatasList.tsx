@@ -4,6 +4,14 @@ import { useNavigate } from 'react-router-dom';
 import { AxiosResponse } from 'axios';
 import { StatusCodes } from 'http-status-codes';
 
+import Typography from '@mui/material/Typography';
+import Grid from '@mui/material/Grid';
+import Card from '@mui/material/Card';
+import CardActionArea from '@mui/material/CardActionArea';
+import CardContent from '@mui/material/CardContent';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+
 import { ApplicationContext } from '../../contexts/ApplicationContext';
 import { getAllKatas } from '../../services/katasService';
 import { getAllKatasById } from '../../services/usersService';
@@ -19,7 +27,7 @@ export const KatasList: React.FC<Props>= ({owner}) => {
 
     const firstRenderRef = useRef(false)
 
-    const { token, user, setLoading } = useContext(ApplicationContext);
+    const { token, setLoading } = useContext(ApplicationContext);
 
     let navigate = useNavigate();
 
@@ -29,81 +37,115 @@ export const KatasList: React.FC<Props>= ({owner}) => {
     const [errorMsg, setErrorMsg] = useState('');
 
     const ratingText = (kata: IKata) => ( 
-        `Rating: ${kata?.stars} / 5`
+        `Rating: ${kata?.stars.average} / 5`
     );
 
     const navigateToKataDetail = (id: string) => {
         navigate(`/katas/${id}`);
+    };
+
+    const getKatas = () => {
+        if (!owner._id) {
+            getAllKatas(token, currentPage).then((response: AxiosResponse) => {
+                if(response.status === StatusCodes.OK){
+                    onKatasSuccess(response);
+                } else {
+                    throw new Error('Something went wrong');
+                }
+            }).catch((error) => {
+                onKatasFailed(error);
+            });
+        } else {
+            getAllKatasById(token, owner._id, currentPage).then((response: AxiosResponse) => {
+                if(response.status === StatusCodes.OK){
+                    onKatasSuccess(response);
+                } else {
+                    throw new Error('Something went wrong');
+                }
+            }).catch((error) => {
+                onKatasFailed(error);
+            });
+        }
     }
+
+    const onKatasSuccess = (response: AxiosResponse) => {
+        let { katas, totalPages, currentPage} = response.data;
+        setKatas(katas);
+        setTotalPages(totalPages);
+        setCurrentPage(currentPage);
+        setLoading(false);
+    };
+
+    const onKatasFailed = (error: any) => {
+        let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
+        console.error(`[Get All Katas ERROR]: ${responseMsg}`);
+        setErrorMsg(responseMsg);             
+        setLoading(false);
+    };
+
+    const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
+        setLoading(true);
+        setCurrentPage(page);
+        getKatas();
+    };
 
     useEffect(() => {
         if (!firstRenderRef.current) {
             firstRenderRef.current = true;
-            if (!token || !user) {
-                return navigate('/login');
-            } 
-            if (!owner) {
-                getAllKatas(token, currentPage).then((response: AxiosResponse) => {
-                    if(response.status === StatusCodes.OK){
-                        let { katas, totalPages, currentPage} = response.data;
-                        setKatas(katas);
-                        setTotalPages(totalPages);
-                        setCurrentPage(currentPage);
-                        setLoading(false);
-                    } else {
-                        throw new Error('Something went wrong');
-                    }
-                }).catch((error) => {
-                    let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
-                    console.error(`[Get All Katas ERROR]: ${responseMsg}`);
-                    setErrorMsg(responseMsg);             
-                    setLoading(false);
-                });
-            } else {
-                getAllKatasById(token, owner._id, currentPage).then((response: AxiosResponse) => {
-                    if(response.status === StatusCodes.OK){
-                        let { katas, totalPages, currentPage} = response.data;
-                        setKatas(katas);
-                        setTotalPages(totalPages);
-                        setCurrentPage(currentPage);
-                        setLoading(false);
-                    } else {
-                        throw new Error('Something went wrong');
-                    }
-                }).catch((error) => {
-                    let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
-                    console.error(`[Get All Katas ERROR]: ${responseMsg}`);
-                    setErrorMsg(responseMsg);             
-                    setLoading(false);
-                });
-            }
+            getKatas();
         }
-    }, [currentPage, navigate, owner, setLoading, token, user]);
+    });
 
     return (
-        <div>
+        <>
             { katas.length > 0 ? 
-                    <div>
-                        {/* TODO: Export to isolated Component */}
+                <>
+                    <Grid item xs={12} md={6}>
                         { katas.map((kata: IKata) => 
-                            (
-                                <div key={kata._id}>
-                                    <h3 onClick={() => navigateToKataDetail(kata._id)} >{kata.name}</h3>
-                                    <h4>{kata.description}</h4>
-                                    <h5>Creator: {kata.creator}</h5>
-                                    <p>{ratingText(kata)}</p>
-                                </div>
-                            )
+                            <CardActionArea component="a" onClick={() => navigateToKataDetail(kata._id)} key={kata._id}>
+                                <Card sx={{ display: 'flex' }}>
+                                    <CardContent sx={{ flex: 1 }}>
+                                        <Typography component="h2" variant="h5">
+                                            {kata.name}
+                                        </Typography>
+                                        <Typography variant="subtitle1">
+                                            {kata.description}
+                                        </Typography>
+                                        <Typography variant="subtitle2">
+                                            {`Level: ${kata.level}`}
+                                        </Typography>
+                                        <Typography variant="subtitle2">
+                                            {`Intents: ${kata.intents}`}
+                                        </Typography>
+                                        <Typography variant="subtitle2">
+                                            {`Stars: ${ratingText(kata)} by ${kata.stars.users.length} users`}
+                                        </Typography>
+                                        <Typography variant="subtitle2">
+                                            {`Number of participants: ${kata.participants.length}`}
+                                        </Typography>
+                                    </CardContent>
+                                </Card>
+                            </CardActionArea>
                         )}
-                    </div>
+                    </Grid> 
+
+                    <Stack spacing={2} marginTop={5}>
+                        <Pagination 
+                            variant="outlined" 
+                            color="primary" 
+                            count={totalPages} 
+                            page={parseInt(currentPage.toString())}
+                            onChange={handleChangePage}
+                        />
+                    </Stack>
+                </>
+                
                 :
-                    <div>
-                        <h5>
-                            No katas found
-                        </h5>
-                    </div>
+
+                errorMsg ?
+                    (<p> {errorMsg} </p>) :
+                    (<p> No katas found </p>)
             }
-            
-        </div>
+        </>
     )
 };
