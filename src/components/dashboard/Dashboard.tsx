@@ -1,39 +1,24 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext } from 'react';
+import { Link as RouterLink } from 'react-router-dom'; 
 
-// import { AxiosResponse } from 'axios';
-// import { StatusCodes } from 'http-status-codes';
+import Link from '@mui/material/Link';
 
 import { ApplicationContext } from '../../contexts/ApplicationContext';
-// import { NewEditor } from '../editor/NewEditor';
-// import { TipTapEditor } from '../editor/TipTapEditor';
-import { FileUploader } from '../uploader/FileUploader';
+
+import { KatasList } from '../lists/KatasList';
 
 
 export const Dashboard = () => {
 
-    const firstRenderRef = useRef(false);
-
-    const { token, user, setLoading } = useContext(ApplicationContext);
-
-    let navigate = useNavigate();
-
-    useEffect(() => {
-        if (!firstRenderRef.current) {
-            firstRenderRef.current = true;
-            setLoading(false);
-        }
-    }, [setLoading]);
+    const { user } = useContext(ApplicationContext);
 
     return (
         <>
-            
-            {/* Code Editor */}
-            {/* <NewEditor /> */}
-            {/* <TipTapEditor /> */}
-            {/* File Uploader */}
-            <FileUploader />
-                    
+            <Link component={RouterLink} to="/katas/new" variant="body2">
+                Create new kata
+            </Link>
+
+            <KatasList owner={user} />
         </>
     );
 };
