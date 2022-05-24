@@ -1,13 +1,10 @@
 import { AxiosRequestConfig } from 'axios';
 
 import axios from '../utils/config/axios.config';
-import { KataLevel } from '../utils/interfaces/IKata.interface';
+import { IKataUpdate, KataLevels } from '../utils/interfaces/IKata.interface';
 
 
-export const getAllKatas = (token: string, page?: number, limit?: number, level?: KataLevel, order?: {}) => {
-
-    // http://localhost:8000/api/katas?limit=1&page=1
-    // Add headers with JWT in x-access-token
+export const getAllKatas = (token: string, page?: number, limit?: number, level?: KataLevels, order?: {}) => {
     const options: AxiosRequestConfig = {
         headers: {
             'x-access-token': token
@@ -20,12 +17,9 @@ export const getAllKatas = (token: string, page?: number, limit?: number, level?
         }
     }
     return axios.get('/katas', options)
-
 }
 
 export const getKataByID = (token: string, id: string) => {
-    // http://localhost:8000/api/katas?id=XXXXXXXXXXXX
-    // Add headers with JWT in x-access-token
     const options: AxiosRequestConfig = {
         headers: {
             'x-access-token': token
@@ -34,6 +28,23 @@ export const getKataByID = (token: string, id: string) => {
             id
         }
     }
-
     return axios.get('/katas', options)
+}
+
+export const createKata = (token: string, kata: IKataUpdate) => {
+    const options: AxiosRequestConfig = {
+        headers: {
+            'x-access-token': token
+        }
+    }
+    return axios.post('/katas', kata, options);
+}
+
+export const updateKata = (token: string, kata: IKataUpdate) => {
+    const options: AxiosRequestConfig = {
+        headers: {
+            'x-access-token': token
+        }
+    }
+    return axios.put('/katas', kata, options);
 }

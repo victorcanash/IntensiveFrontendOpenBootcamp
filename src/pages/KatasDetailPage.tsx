@@ -41,12 +41,12 @@ export const KatasDetailPage = () => {
                         _id: response.data._id,
                         name: response.data.name,
                         description: response.data.description,
-                        stars: response.data.stars,
                         level: response.data.level,
                         intents: response.data.intents,
+                        stars: response.data.stars,           
                         creator: response.data.creator,
-                        solution: response.data.solution,
-                        participants: response.data.participants
+                        participants: response.data.participants,
+                        files: response.data.files
                     } as IKata;
                     setKata(kataData);
                     setLoading(false);
@@ -75,7 +75,7 @@ export const KatasDetailPage = () => {
                         {showSolution ? 'Show Solution': 'Hide Solution'}
                     </button>
 
-                    { showSolution ? null : <CodeEditor> {kata.solution} </CodeEditor> }
+                    {/* showSolution ? null : <CodeEditor> {kata.solution} </CodeEditor> */}
                 </div>    
             :
                 <div>
