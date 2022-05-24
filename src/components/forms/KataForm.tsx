@@ -62,13 +62,6 @@ export const KataForm: React.FC<Props> = ({kata}) => {
         },
     });
 
-    const creating = () => {
-        if (!kata?.name || kata.name === '') {
-            return true;
-        }
-        return false;
-    }
-
     const handleSubmit = async (values: {name: string, description: string, level: KataLevels, intents: number}) => {
         setLoading(true);
         const newKata: IKataUpdate = {
@@ -77,7 +70,7 @@ export const KataForm: React.FC<Props> = ({kata}) => {
             level: values.level,
             intents: values.intents
         };
-        if (creating()) {
+        if (!kata) {
             createKata(token, newKata).then(async (response: AxiosResponse) => {
                 if (response.status === StatusCodes.CREATED) {
                     setSuccessMsg('Created Kata');
