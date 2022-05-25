@@ -87,17 +87,17 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 const myTheme = createTheme();
 
-interface Props {
+interface IProps {
     page: JSX.Element
-}
+};
 
-export const Navigation: React.FC<Props> = ({ page }) => {
+export const Navigation = ({ page }: IProps) => {
 
-    const firstRenderRef = useRef(false)
+    const firstRenderRef = useRef(false);
 
     const { token, user, setLoading, setToken, setUser } = useContext(ApplicationContext);
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [open, setOpen] = useState(true);
     
@@ -136,7 +136,7 @@ export const Navigation: React.FC<Props> = ({ page }) => {
                 return navigate('/login');
             } 
         }
-    }, [navigate, token, user])
+    });
 
     return (
         <ThemeProvider theme={myTheme}>
@@ -209,7 +209,7 @@ export const Navigation: React.FC<Props> = ({ page }) => {
                     <Divider />
                     {/* List of menu items */}
                     <List component='nav'>
-                        { MenuItems }
+                        <MenuItems />
                     </List>
                 </Drawer>
 
@@ -231,7 +231,10 @@ export const Navigation: React.FC<Props> = ({ page }) => {
                                 flexDirection: 'column',
                             
                             }}>
-                                { page }
+                                { 
+                                    token && user &&
+                                        page 
+                                }
                             </Paper>
                         </Grid>
                     </Container>
@@ -240,5 +243,5 @@ export const Navigation: React.FC<Props> = ({ page }) => {
             </Box>
 
         </ThemeProvider>
-    )
-}
+    );
+};
