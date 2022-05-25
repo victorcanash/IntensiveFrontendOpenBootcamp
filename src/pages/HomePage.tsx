@@ -7,5 +7,5 @@ export const HomePage = () => {
 
     return (
         <Dashboard />
-    )
-}
+    );
+};

@@ -7,5 +7,5 @@ export const RegisterPage = () => {
 
     return (
         <RegisterForm />
-    )
-}
+    );
+};

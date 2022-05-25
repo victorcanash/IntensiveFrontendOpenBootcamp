@@ -23,5 +23,5 @@ export const Loading = () => {
         >
             <CircularProgress size='60px' />
         </div>
-    )
-}
+    );
+};

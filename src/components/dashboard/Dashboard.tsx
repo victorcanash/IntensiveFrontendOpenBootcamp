@@ -13,12 +13,12 @@ export const Dashboard = () => {
     const { user } = useContext(ApplicationContext);
 
     return (
-        <>
+        <React.Fragment>
             <Link component={RouterLink} to="/katas/new" variant="body2">
                 Create new kata
             </Link>
 
             <KatasList owner={user} />
-        </>
+        </React.Fragment>
     );
 };

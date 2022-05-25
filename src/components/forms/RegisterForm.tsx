@@ -144,7 +144,7 @@ export const RegisterForm = () => {
             firstRenderRef.current = true;
             setLoading(false);
         }    
-    }, [setLoading]);
+    });
 
     return (
         <ThemeProvider theme={theme}>
@@ -292,4 +292,4 @@ export const RegisterForm = () => {
 
         </ThemeProvider>
     );
-}
+};

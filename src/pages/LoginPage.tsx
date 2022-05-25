@@ -7,5 +7,5 @@ export const LoginPage = () => {
 
     return (
         <LoginForm />
-    )
-}
+    );
+};

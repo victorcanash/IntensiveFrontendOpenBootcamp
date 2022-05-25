@@ -1,8 +1,15 @@
 import { useState } from 'react';
+
 import { Dropzone, FileItem, FileValidated, FullScreenPreview, VideoPreview } from '@dropzone-ui/react';
 
+import envConfig from '../../utils/config/env.config';
 
-export const FileUploader = () => {
+
+interface IProps {
+    kataId: string
+};
+
+export const FileUploader = ({ kataId }: IProps) => {
 
     const [files, setFiles] = useState<FileValidated[]>([]);
     const [imageSrc, setImageSrc] = useState<any>(undefined);
@@ -37,9 +44,9 @@ export const FileUploader = () => {
             onClean={handleClean}
             onChange={updateFiles} 
             value={files}
-            maxFiles={5}
-            // maxFileSize={2998000}
-            url="http://localhost:8000/api/uploadFile"
+            maxFiles={3}
+            maxFileSize={209715200}
+            url={`${envConfig.BACKEND_API_BASE_URL} + /katas/files/ + ${kataId}`}
             fakeUploading
         >
         {files.map((file: FileValidated) => (
@@ -70,4 +77,4 @@ export const FileUploader = () => {
             />
         </Dropzone>
     );
-}
+};

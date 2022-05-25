@@ -6,6 +6,7 @@ import { Copyright } from './Copyright';
 
 
 export const StickyFooter = () => {
+
     return (
         <Box sx={
             {
@@ -34,5 +35,5 @@ export const StickyFooter = () => {
                 </Container>
             </Box>
         </Box>
-    )
-}
+    );
+};

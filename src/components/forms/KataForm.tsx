@@ -36,12 +36,12 @@ const validationSchema = Yup.object().shape(
     }
 );
 
-interface Props {
+interface IProps {
     kata: IKata;
     onFormSuccess: (createdKata: IKata) => void;
 };
 
-export const KataForm: React.FC<Props> = ({kata, onFormSuccess}) => {
+export const KataForm = ({ kata, onFormSuccess }: IProps) => {
 
     const firstRenderRef = useRef(false);
 
@@ -124,10 +124,10 @@ export const KataForm: React.FC<Props> = ({kata, onFormSuccess}) => {
             firstRenderRef.current = true;
             setLoading(false);
         }    
-    }, [setLoading]);
+    });
 
     return (
-        <>
+        <React.Fragment>
             <Typography component="h1" variant="h5">
                 { 
                     kata ?
@@ -136,7 +136,6 @@ export const KataForm: React.FC<Props> = ({kata, onFormSuccess}) => {
                 }
             </Typography>
 
-            
             <form onSubmit={formik.handleSubmit}>
 
                 {/* Name Field */}
@@ -231,6 +230,6 @@ export const KataForm: React.FC<Props> = ({kata, onFormSuccess}) => {
                 } 
 
             </form>
-        </>
+        </React.Fragment>
     );
 };

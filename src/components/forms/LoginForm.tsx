@@ -51,7 +51,7 @@ export const LoginForm = () => {
 
     const { token, setLoading, setToken, setUser } = useContext(ApplicationContext);
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [errorMsg, setErrorMsg] = useState('');
 
@@ -103,7 +103,7 @@ export const LoginForm = () => {
             firstRenderRef.current = true;
             setLoading(false);
         }    
-    }, [setLoading]);
+    });
 
     return (
         <ThemeProvider theme={theme}>
@@ -210,4 +210,4 @@ export const LoginForm = () => {
 
         </ThemeProvider>
     );
-}
+};
