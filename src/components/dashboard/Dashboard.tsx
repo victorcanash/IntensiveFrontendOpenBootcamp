@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { Link as RouterLink } from 'react-router-dom'; 
 
-import Link from '@mui/material/Link';
+import Container from '@mui/material/Container';
+import Typography from '@mui/material/Typography';
 
 import { ApplicationContext } from '../../contexts/ApplicationContext';
 
@@ -14,10 +14,11 @@ export const Dashboard = () => {
 
     return (
         <React.Fragment>
-            <Link component={RouterLink} to="/katas/new" variant="body2">
-                Create new kata
-            </Link>
-
+            <Container sx={{ mt: 4, mb: 5 }}>
+                <Typography component="h1" variant="h5">
+                    Your katas
+                </Typography>
+            </Container>
             <KatasList owner={user} />
         </React.Fragment>
     );

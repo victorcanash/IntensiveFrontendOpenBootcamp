@@ -106,7 +106,7 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
                     <Grid item xs={12} md={6}>
                         { katas.map((kata: IKata) => 
                             <CardActionArea component="a" onClick={() => navigateToKataDetail(kata._id)} key={kata._id}>
-                                <Card sx={{ display: 'flex' }}>
+                                <Card sx={{ display: 'flex' }} variant="outlined">
                                     <CardContent sx={{ flex: 1 }}>
                                         <Typography component="h2" variant="h5">
                                             {kata.name}
