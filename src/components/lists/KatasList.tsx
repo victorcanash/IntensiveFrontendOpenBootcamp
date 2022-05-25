@@ -19,17 +19,20 @@ import { IKata } from '../../utils/interfaces/IKata.interface';
 import { IUser } from '../../utils/interfaces/IUser.interface';
 
 
-interface Props {
+interface IProps {
     owner: IUser
 };
+const defaultProps = {
+    owner: {} as IUser
+};
 
-export const KatasList: React.FC<Props>= ({owner}) => {
+export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
 
     const firstRenderRef = useRef(false)
 
     const { token, setLoading } = useContext(ApplicationContext);
 
-    let navigate = useNavigate();
+    const navigate = useNavigate();
 
     const [katas, setKatas] = useState([] as IKata[]);
     const [totalPages, setTotalPages] = useState(1);
@@ -66,7 +69,7 @@ export const KatasList: React.FC<Props>= ({owner}) => {
                 onKatasFailed(error);
             });
         }
-    }
+    };
 
     const onKatasSuccess = (response: AxiosResponse) => {
         let { katas, totalPages, currentPage} = response.data;
@@ -97,7 +100,7 @@ export const KatasList: React.FC<Props>= ({owner}) => {
     });
 
     return (
-        <>
+        <React.Fragment>
             { katas.length > 0 ? 
                 <>
                     <Grid item xs={12} md={6}>
@@ -146,6 +149,8 @@ export const KatasList: React.FC<Props>= ({owner}) => {
                     (<p> {errorMsg} </p>) :
                     (<p> No katas found </p>)
             }
-        </>
-    )
+        </React.Fragment>
+    );
 };
+
+KatasList.defaultProps = defaultProps;
