@@ -21,9 +21,10 @@ export const getCredentials = async (): Promise<{token: string, user: IUser}> =>
         }).catch((error) => {
             let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
             console.error(`[Get Logged User ERROR]: ${responseMsg}`);
-            if (error.response?.status === StatusCodes.UNAUTHORIZED || error.response?.status === StatusCodes.NOT_FOUND) {
+            /* if (error.response?.status === StatusCodes.UNAUTHORIZED || error.response?.status === StatusCodes.NOT_FOUND) {
                 removeLocalStorageItem(STORAGE_KEYS.JWTToken);
-            }
+            }*/
+            removeLocalStorageItem(STORAGE_KEYS.JWTToken);
         });
     }   
     return result;

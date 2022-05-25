@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 
 import './App.css';
@@ -46,7 +46,7 @@ function App() {
     }, []);
 
     return (
-        <>
+        <React.Fragment>
             {
                 loading && 
                     <Loading />
@@ -77,7 +77,7 @@ function App() {
                         </ApplicationContext.Provider>
                     </div> 
             }
-        </>
+        </React.Fragment>
     );
 }
 
