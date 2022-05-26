@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';  
 import { useNavigate, Link as RouterLink } from 'react-router-dom'; 
 
-import { useFormik } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { AxiosResponse } from 'axios';
 import { StatusCodes } from 'http-status-codes';
@@ -72,19 +72,13 @@ export const RegisterForm = () => {
 
     const [errorMsg, setErrorMsg] = useState('');
 
-    const formik = useFormik({
-        initialValues: {
-            name: '',
-            email: '',
-            password: '',
-            confirm: '',
-            age: 18
-        },
-        validationSchema: validationSchema,
-        onSubmit: (values) => {
-            handleSubmit(values);
-        },
-    });
+    const initialValues = {
+        name: '',
+        email: '',
+        password: '',
+        confirm: '',
+        age: 18
+    };
 
     const handleSubmit = async (values: {name: string, email: string, password: string, age: number}) => {
         setLoading(true);
@@ -175,116 +169,124 @@ export const RegisterForm = () => {
                         Sign up
                     </Typography>
 
-                    <form onSubmit={formik.handleSubmit}>
+                    <Formik
+                        initialValues={initialValues}
+                        validationSchema={validationSchema}
+                        onSubmit={handleSubmit}
+                    >
+                        {props => (
+                            <Form>
 
-                        {/* Name Field */}
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="name"
-                            name="name"
-                            autoComplete="name"        
-                            label="Name"
-                            autoFocus
-                            value={formik.values.name}
-                            onChange={formik.handleChange}
-                            error={formik.touched.name && Boolean(formik.errors.name)}
-                            helperText={formik.touched.name && formik.errors.name}
-                        />
+                                {/* Name Field */}
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="name"
+                                    name="name"
+                                    autoComplete="name"        
+                                    label="Name"
+                                    autoFocus
+                                    value={props.values.name}
+                                    onChange={props.handleChange}
+                                    error={props.touched.name && Boolean(props.errors.name)}
+                                    helperText={props.touched.name && props.errors.name}
+                                />
 
-                        {/* Email Field */}
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            name="email"
-                            autoComplete="email"
-                            label="Email Address"   
-                            value={formik.values.email}
-                            onChange={formik.handleChange}
-                            error={formik.touched.email && Boolean(formik.errors.email)}
-                            helperText={formik.touched.email && formik.errors.email}
-                        />
+                                {/* Email Field */}
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    name="email"
+                                    autoComplete="email"
+                                    label="Email Address"   
+                                    value={props.values.email}
+                                    onChange={props.handleChange}
+                                    error={props.touched.email && Boolean(props.errors.email)}
+                                    helperText={props.touched.email && props.errors.email}
+                                />
 
-                        {/* Password Field */}
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="password"
-                            name="password"
-                            autoComplete="new-password"
-                            label="Password"
-                            type="password"   
-                            value={formik.values.password}
-                            onChange={formik.handleChange}
-                            error={formik.touched.password && Boolean(formik.errors.password)}
-                            helperText={formik.touched.password && formik.errors.password}      
-                        />
+                                {/* Password Field */}
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="password"
+                                    name="password"
+                                    autoComplete="new-password"
+                                    label="Password"
+                                    type="password"   
+                                    value={props.values.password}
+                                    onChange={props.handleChange}
+                                    error={props.touched.password && Boolean(props.errors.password)}
+                                    helperText={props.touched.password && props.errors.password}      
+                                />
 
-                        {/* Confirm Password Field */}
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="confirm"
-                            name="confirm"
-                            autoComplete="new-confirm"
-                            label="Confirm Password"
-                            type="password"   
-                            value={formik.values.confirm}
-                            onChange={formik.handleChange}
-                            error={formik.touched.confirm && Boolean(formik.errors.confirm)}
-                            helperText={formik.touched.confirm && formik.errors.confirm}      
-                        />
+                                {/* Confirm Password Field */}
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="confirm"
+                                    name="confirm"
+                                    autoComplete="new-confirm"
+                                    label="Confirm Password"
+                                    type="password"   
+                                    value={props.values.confirm}
+                                    onChange={props.handleChange}
+                                    error={props.touched.confirm && Boolean(props.errors.confirm)}
+                                    helperText={props.touched.confirm && props.errors.confirm}      
+                                />
 
-                        {/* Age Field */}
-                        <TextField 
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="age"
-                            name="age"
-                            autoComplete="age"
-                            label="Age"
-                            type="number"  
-                            inputProps={{min: 10, max: 100}} 
-                            value={formik.values.age}
-                            onChange={formik.handleChange}
-                            error={formik.touched.age && Boolean(formik.errors.age)}
-                            helperText={formik.touched.age && formik.errors.age}      
-                        />
+                                {/* Age Field */}
+                                <TextField 
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="age"
+                                    name="age"
+                                    autoComplete="age"
+                                    label="Age"
+                                    type="number"  
+                                    inputProps={{min: 10, max: 100}} 
+                                    value={props.values.age}
+                                    onChange={props.handleChange}
+                                    error={props.touched.age && Boolean(props.errors.age)}
+                                    helperText={props.touched.age && props.errors.age}      
+                                />
 
-                        <FormControlLabel
-                            control={<Checkbox value="allowExtraEmails" color="primary" />}
-                            label="I want to receive inspiration, marketing promotions and updates via email."
-                        />
+                                <FormControlLabel
+                                    control={<Checkbox value="allowExtraEmails" color="primary" />}
+                                    label="I want to receive inspiration, marketing promotions and updates via email."
+                                />
 
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Sign Up
-                        </Button>
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2 }}
+                                >
+                                    Sign Up
+                                </Button>
 
-                        {
-                            errorMsg && errorMsg !== '' &&
-                                <Alert severity="error">{ errorMsg }</Alert>
-                        }        
+                                {
+                                    errorMsg && errorMsg !== '' &&
+                                        <Alert severity="error">{ errorMsg }</Alert>
+                                }        
 
-                        <Grid container>
-                            <Grid item xs>
-                                <Link component={RouterLink} to="/login" variant="body2">
-                                    Already have an account? Sign in
-                                </Link>
-                            </Grid>
-                        </Grid>
+                                <Grid container>
+                                    <Grid item xs>
+                                        <Link component={RouterLink} to="/login" variant="body2">
+                                            Already have an account? Sign in
+                                        </Link>
+                                    </Grid>
+                                </Grid>
                         
-                    </form>
+                            </Form>
+                        )}
+                    </Formik>
 
                 </Box>
 

@@ -1,7 +1,7 @@
 import React, { useState, useContext, useEffect, useRef } from 'react';  
 import { useNavigate, Link as RouterLink } from 'react-router-dom'; 
 
-import { useFormik } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import { AxiosResponse } from 'axios';
 import { StatusCodes } from 'http-status-codes';
@@ -55,16 +55,10 @@ export const LoginForm = () => {
 
     const [errorMsg, setErrorMsg] = useState('');
 
-    const formik = useFormik({
-        initialValues: {
-            email: '',
-            password: '',
-        },
-        validationSchema: validationSchema,
-        onSubmit: (values) => {
-            handleSubmit(values);
-        },
-    });
+    const initialValues = { 
+        email: '',
+        password: '',
+    };
 
     const handleSubmit = async (values: {email: string, password: string}) => {
         setLoading(true);
@@ -134,75 +128,83 @@ export const LoginForm = () => {
                         Sign in
                     </Typography>
 
-                    <form onSubmit={formik.handleSubmit}>
+                    <Formik
+                        initialValues={initialValues}
+                        validationSchema={validationSchema}
+                        onSubmit={handleSubmit}
+                    >
+                        {props => (
+                            <Form>
 
-                        {/* Email Field */}
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            name="email"
-                            autoComplete="email"
-                            label="Email Address"
-                            autoFocus
-                            value={formik.values.email}
-                            onChange={formik.handleChange}
-                            error={formik.touched.email && Boolean(formik.errors.email)}
-                            helperText={formik.touched.email && formik.errors.email}
-                        />
+                                {/* Email Field */}
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="email"
+                                    name="email"
+                                    autoComplete="email"
+                                    label="Email Address"
+                                    autoFocus
+                                    value={props.values.email}
+                                    onChange={props.handleChange}
+                                    error={props.touched.email && Boolean(props.errors.email)}
+                                    helperText={props.touched.email && props.errors.email}
+                                />
 
-                        {/* Password Field */}
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="password"
-                            name="password"
-                            type="password"
-                            autoComplete="current-password"
-                            label="Password"
-                            value={formik.values.password}
-                            onChange={formik.handleChange}
-                            error={formik.touched.password && Boolean(formik.errors.password)}
-                            helperText={formik.touched.password && formik.errors.password}
-                        />
+                                {/* Password Field */}
+                                <TextField
+                                    margin="normal"
+                                    required
+                                    fullWidth
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    label="Password"
+                                    value={props.values.password}
+                                    onChange={props.handleChange}
+                                    error={props.touched.password && Boolean(props.errors.password)}
+                                    helperText={props.touched.password && props.errors.password}
+                                />
 
-                        <FormControlLabel
-                            control={<Checkbox value="remember" color="primary" />}
-                            label="Remember me"
-                        />
+                                <FormControlLabel
+                                    control={<Checkbox value="remember" color="primary" />}
+                                    label="Remember me"
+                                />
 
-                        {/* SUBMIT FORM */}
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                            /*disabled={ formik.isSubmitting || !formik.isValid || !formik.touched.email }*/
-                        >
-                            Sign In
-                        </Button>
+                                {/* SUBMIT FORM */}
+                                <Button
+                                    type="submit"
+                                    fullWidth
+                                    variant="contained"
+                                    sx={{ mt: 3, mb: 2 }}
+                                    /*disabled={ formik.isSubmitting || !formik.isValid || !formik.touched.email }*/
+                                >
+                                    Sign In
+                                </Button>
 
-                        {
-                            errorMsg && errorMsg !== '' &&
-                                <Alert severity="error">{ errorMsg }</Alert>
-                        } 
+                                {
+                                    errorMsg && errorMsg !== '' &&
+                                        <Alert severity="error">{ errorMsg }</Alert>
+                                } 
 
-                        <Grid container>
-                            <Grid item xs>
-                                <Link component={RouterLink} to="/login" variant="body2">
-                                    Forgot password?
-                                </Link>
-                            </Grid>
-                            <Grid item>
-                                <Link component={RouterLink} to="/register" variant="body2">
-                                    Don't have an account? Sign Up
-                                </Link>
-                            </Grid>
-                        </Grid>
+                                <Grid container>
+                                    <Grid item xs>
+                                        <Link component={RouterLink} to="/login" variant="body2">
+                                            Forgot password?
+                                        </Link>
+                                    </Grid>
+                                    <Grid item>
+                                        <Link component={RouterLink} to="/register" variant="body2">
+                                            Don't have an account? Sign Up
+                                        </Link>
+                                    </Grid>
+                                </Grid>
 
-                    </form>
+                            </Form>
+                        )}
+                    </Formik>
 
                 </Box>
 
