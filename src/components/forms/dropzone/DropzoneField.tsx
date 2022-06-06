@@ -7,7 +7,7 @@ import { makeStyles } from '@mui/styles';
 import Grid from '@mui/material/Grid';
 import Alert from '@mui/material/Alert';
 
-import { katasFilesConfig } from '../../utils/config/fileUploader.config';
+import { katasFilesConfig } from '../../../utils/config/fileUploader.config';
 
 import { DropzoneItem } from './DropzoneItem';
 

@@ -15,7 +15,7 @@ import { ApplicationContext } from '../../contexts/ApplicationContext';
 import { createKata, updateKata, updateKataFiles } from '../../services/katasService';
 import { IKata, IKataUpdate, KataLevels } from '../../utils/interfaces/IKata.interface';
 
-import { DropzoneField } from '../dropzone/DropzoneField';
+import { DropzoneField } from './dropzone/DropzoneField';
 
 
 const validationSchema = Yup.object().shape(
