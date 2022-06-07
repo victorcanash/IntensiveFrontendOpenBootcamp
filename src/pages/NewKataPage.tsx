@@ -20,9 +20,7 @@ export const NewKataPage = () => {
 
     return (
         <React.Fragment>
-            {
-                <KataForm kata={{} as IKata} onFormSuccess={onCreatedKata} />
-            }
+            <KataForm kata={{} as IKata} onFormSuccess={onCreatedKata} />
         </React.Fragment>
     );
 };

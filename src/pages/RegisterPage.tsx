@@ -6,6 +6,8 @@ import { RegisterForm } from '../components/forms/RegisterForm';
 export const RegisterPage = () => {
 
     return (
-        <RegisterForm />
+        <React.Fragment>
+            <RegisterForm />
+        </React.Fragment>
     );
 };
