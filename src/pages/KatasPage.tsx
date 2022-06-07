@@ -11,9 +11,9 @@ export const KatasPage = () => {
     return (
         <React.Fragment>
             <Container sx={{ mt: 4, mb: 5 }}>
-                    <Typography component="h1" variant="h5">
-                        All katas
-                    </Typography>
+                <Typography component="h1" variant="h5">
+                    All katas
+                </Typography>
             </Container>
             <KatasList />
         </React.Fragment>

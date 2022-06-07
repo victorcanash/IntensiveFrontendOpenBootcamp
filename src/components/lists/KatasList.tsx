@@ -30,7 +30,7 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
 
     const firstRenderRef = useRef(false)
 
-    const { token, setLoading } = useContext(ApplicationContext);
+    const { token, pageContainer, setLoading } = useContext(ApplicationContext);
 
     const navigate = useNavigate();
 
@@ -47,10 +47,10 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
         navigate(`/katas/${id}`);
     };
 
-    const getKatas = () => {
+    const getKatas = (page: number = 1) => {
         if (!owner._id) {
-            getAllKatas(token, currentPage).then((response: AxiosResponse) => {
-                if(response.status === StatusCodes.OK){
+            getAllKatas(token, page).then((response: AxiosResponse) => {
+                if (response.status === StatusCodes.OK){
                     onKatasSuccess(response);
                 } else {
                     throw new Error('Something went wrong');
@@ -59,8 +59,8 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
                 onKatasFailed(error);
             });
         } else {
-            getAllKatasById(token, owner._id, currentPage).then((response: AxiosResponse) => {
-                if(response.status === StatusCodes.OK){
+            getAllKatasById(token, owner._id, page).then((response: AxiosResponse) => {
+                if (response.status === StatusCodes.OK){
                     onKatasSuccess(response);
                 } else {
                     throw new Error('Something went wrong');
@@ -72,7 +72,7 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
     };
 
     const onKatasSuccess = (response: AxiosResponse) => {
-        let { katas, totalPages, currentPage} = response.data;
+        const { katas, totalPages, currentPage} = response.data;
         setKatas(katas);
         setTotalPages(totalPages);
         setCurrentPage(currentPage);
@@ -80,7 +80,7 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
     };
 
     const onKatasFailed = (error: any) => {
-        let responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
+        const responseMsg = error.response?.data?.message ? error.response.data.message : error.message;
         console.error(`[Get All Katas ERROR]: ${responseMsg}`);
         setErrorMsg(responseMsg);             
         setLoading(false);
@@ -88,8 +88,9 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
 
     const handleChangePage = (event: React.ChangeEvent<unknown>, page: number) => {
         setLoading(true);
-        setCurrentPage(page);
-        getKatas();
+        window.scrollTo(0, 0);
+        pageContainer.scrollTo(0, 0);
+        getKatas(page);
     };
 
     useEffect(() => {
@@ -102,7 +103,7 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
     return (
         <React.Fragment>
             { katas.length > 0 ? 
-                <>
+                <React.Fragment>
                     <Grid item xs={12} md={6}>
                         { katas.map((kata: IKata) => 
                             <CardActionArea component="a" onClick={() => navigateToKataDetail(kata._id)} key={kata._id}>
@@ -141,7 +142,7 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
                             onChange={handleChangePage}
                         />
                     </Stack>
-                </>
+                </React.Fragment>
                 
                 :
 
