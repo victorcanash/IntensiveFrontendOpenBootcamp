@@ -44,6 +44,7 @@ export const KatasList = ({ owner }: IProps & typeof defaultProps) => {
     );
 
     const navigateToKataDetail = (id: string) => {
+        setLoading(true);
         navigate(`/katas/${id}`);
     };
 
