@@ -34,6 +34,11 @@ function App() {
         setUserState(user);
     };
 
+    const [pageContainer, setPageContainerState] = useState({} as HTMLElement);
+    const setPageContainer = (pageContainer: HTMLElement) => {
+        setPageContainerState(pageContainer);
+    };
+
     useEffect(() => {
         if (!firstRenderRef.current) {
             firstRenderRef.current = true; 
@@ -59,10 +64,12 @@ function App() {
                             value={{ 
                                 loading, 
                                 token,
-                                user, 
+                                user,
+                                pageContainer, 
                                 setLoading, 
                                 setToken,
-                                setUser 
+                                setUser,
+                                setPageContainer
                             }}
                         >
 

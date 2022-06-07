@@ -24,6 +24,7 @@ import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 
 import { ApplicationContext } from '../../contexts/ApplicationContext';
+import isEmpty from '../../utils/isEmpty';
 import { logout } from '../../services/authService';
 import { IUser } from '../../utils/interfaces/IUser.interface';
 import { removeLocalStorageItem } from '../../utils/storage';
@@ -94,8 +95,9 @@ interface IProps {
 export const Navigation = ({ page }: IProps) => {
 
     const firstRenderRef = useRef(false);
+    const pageContainerRef = useRef<HTMLElement>(null);
 
-    const { token, user, setLoading, setToken, setUser } = useContext(ApplicationContext);
+    const { token, user, setLoading, setToken, setUser, setPageContainer } = useContext(ApplicationContext);
 
     const navigate = useNavigate();
 
@@ -132,11 +134,19 @@ export const Navigation = ({ page }: IProps) => {
     useEffect(() => {
         if (!firstRenderRef.current) {
             firstRenderRef.current = true;
-            if (!token || !user) {
+            if (!token || isEmpty(user)) {
                 return navigate('/login');
             } 
         }
     });
+
+    useEffect(() => {
+        if (pageContainerRef?.current) {
+            setPageContainer(pageContainerRef.current);
+        } else {
+            setPageContainer({} as HTMLElement);
+        }
+    }, [pageContainerRef, setPageContainer]);
 
     return (
         <ThemeProvider theme={myTheme}>
@@ -221,6 +231,7 @@ export const Navigation = ({ page }: IProps) => {
                         height: '100vh',
                         overflow: 'auto'
                     }}
+                    ref={pageContainerRef}
                 >
                     <Toolbar />
                     <Container maxWidth='lg' sx={{ mt: 4, mg: 4 }}>
