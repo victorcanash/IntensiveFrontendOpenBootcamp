@@ -1,5 +1,5 @@
 import React, { Fragment, useState } from 'react';
-import Editor from 'react-simple-code-editor';
+// import Editor from 'react-simple-code-editor';
 import Highlight, { defaultProps, Language } from 'prism-react-renderer';
 import theme from 'prism-react-renderer/themes/nightOwl';
 
@@ -70,13 +70,13 @@ export const NewEditor = () => {
                 ))}
 
             </select>
-            <Editor
+            {/*<Editor
                 value={code}
                 onValueChange={handleCodeChange}
                 highlight={HighlightElement}
                 padding={10}
                 style={styles.root}
-            />
+            />*/}
         </div>
     )
 }

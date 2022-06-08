@@ -5,16 +5,9 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import LinearProgress from '@mui/material/LinearProgress';
-import { withStyles } from '@mui/styles';
 
 import { IUploadableFile } from './DropzoneField';
 
-
-const ErrorLinearProgress = withStyles({
-    bar: {
-        backgroundColor: 'red',
-    },
-})(LinearProgress);
 
 export interface IDropzoneItemProps {
     uploadableFile: IUploadableFile;
@@ -57,7 +50,7 @@ const ItemError = ({ uploadableFile }: { uploadableFile: IUploadableFile }) => {
 
     return (
         <React.Fragment>
-            <ErrorLinearProgress variant="determinate" value={100} />
+            <LinearProgress color="error" variant="determinate" value={100} />
             {uploadableFile.errors.map((error) => (
                 <div key={error.code}>
                     <Typography color="error">{error.message}</Typography>

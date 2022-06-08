@@ -3,7 +3,6 @@ import React, { useCallback, useState, useEffect, useRef } from 'react';
 import { useField } from 'formik';
 import { FileError, FileRejection, useDropzone } from 'react-dropzone';
 
-import { makeStyles } from '@mui/styles';
 import Grid from '@mui/material/Grid';
 import Alert from '@mui/material/Alert';
 
@@ -11,19 +10,6 @@ import { katasFilesConfig } from '../../../utils/config/fileUploader.config';
 
 import { DropzoneItem } from './DropzoneItem';
 
-
-const useStyles = makeStyles(() => ({
-    dropzone: {
-        border: '2px dashed #afafaf',
-        borderRadius: '1px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: '#ffffff',
-        minHeight: '200px',
-        outline: 'none',
-    },
-}));
 
 let currentId = 0;
 
@@ -52,8 +38,6 @@ export const DropzoneField = ({ name, onChangeFiles ,originFiles = []}: IDropzon
         name: name,
         type: name,
     });
-
-    const classes = useStyles();
 
     const [files, setFiles] = useState<IUploadableFile[]>([]);
 
@@ -106,7 +90,19 @@ export const DropzoneField = ({ name, onChangeFiles ,originFiles = []}: IDropzon
     return (
         <React.Fragment>
             <Grid item>
-                <div {...getRootProps({ className: classes.dropzone })}>
+                <div 
+                    {...getRootProps()} 
+                    style={{
+                        border: '2px dashed #afafaf',
+                        borderRadius: '1px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        background: '#ffffff',
+                        minHeight: '200px',
+                        outline: 'none'
+                    }}
+                >
                     <input {...getInputProps()} />
                     <p>
                         Drag 'n' drop or click here to select between 1 and 3 files
